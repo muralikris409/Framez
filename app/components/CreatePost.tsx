@@ -8,13 +8,13 @@ import { toast } from "react-toastify";
 export default function CreatePost() {
   const [isOpen, setIsOpen] = useState(false);
   const [caption, setCaption] = useState("");
-  const [image, setImage] = useState(null);
+  const [image, setImage] =  useState<string | null>(null);
   const [imageFile, setImageFile] = useState(null);
   const [uploading, setUploading] = useState(false);
 
   const toggleModal = () => setIsOpen(!isOpen);
 
-  const handleImageChange = (e) => {
+  const handleImageChange = (e:any) => {
     const file = e.target.files[0];
     if (!file) return;
 
@@ -23,7 +23,8 @@ export default function CreatePost() {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => {
-      setImage(reader.result);
+      if (typeof reader.result === "string") 
+       setImage(reader.result);
     };
   };
 

@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { PrismaClient, Prisma } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { getToken } from "./cookieHandler";
+import { User } from "../ts/UserInterfaces";
 
 const prisma = new PrismaClient();
 const SECRET_KEY = process.env.JWT_SECRET as string; // Store in .env
@@ -19,7 +20,7 @@ async function verifyToken() {
   }
 }
 
-export async function createUser(user: { email: string; password: string; username?: string; name?: string; image?: string }) {
+export async function createUser(user: any) {
   try {
     if (!user || !user.password || !user.email || !(user.username || user.name)) {
       throw new Error("Invalid user payload. Required fields: email, password, username.");

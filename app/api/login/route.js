@@ -2,11 +2,10 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { PrismaClient } from '@prisma/client';
 import { NextResponse } from 'next/server';
-import Cookies from 'js-cookie';  // Import js-cookie
 
-export const prisma = new PrismaClient();
+ const prisma = new PrismaClient();
 
-export async function handler(req) {
+export async function POST(req) {
   if (req.method === 'POST') {
     const { email, password } = await req.json();
 
@@ -40,4 +39,3 @@ export async function handler(req) {
   });
 }
 
-export { handler as POST };

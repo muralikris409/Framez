@@ -13,7 +13,7 @@ const SearchUsersModal = () => {
   const { searchText, isOpen } = useAppSelector(state => state.search);
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string|null>(null);
  
   useEffect(() => {
     const fetchUsers = async () => {
@@ -39,7 +39,7 @@ const SearchUsersModal = () => {
     fetchUsers();
   }, [searchText]);
 
-  const handleFollowToggle = async (followingUsername, isFollowing) => {
+  const handleFollowToggle = async (followingUsername:any, isFollowing:any) => {
     try {
       if (isFollowing) {
         // Unfollow the user
@@ -49,8 +49,8 @@ const SearchUsersModal = () => {
         await axiosInstance.post(`/api/follow?followingUsername=${followingUsername}`);
       }
       // Optionally, you can update the local state to reflect the change
-      setUsers(prevUsers => 
-        prevUsers.map(user => 
+      setUsers((prevUsers:any) => 
+        prevUsers.map((user:any) => 
           user.username === followingUsername ? { ...user, following: !isFollowing } : user
         )
       );
@@ -80,7 +80,7 @@ const SearchUsersModal = () => {
           ) : error ? (
             <p className="text-center text-red-500">{error}</p>
           ) : users.length > 0 ? (
-            users.map((user) => (
+            users.map((user:any) => (
               <div key={user.id} className="flex items-center justify-between p-2 border rounded-md mb-2">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">

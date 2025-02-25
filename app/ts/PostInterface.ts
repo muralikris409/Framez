@@ -1,4 +1,5 @@
 interface Author {
+    image: string;
     username: string;
     profilePic: string | null;
 }

@@ -10,6 +10,7 @@
   import { storeToken } from '@/app/actions/cookieHandler';
   import { GithubIcon } from 'lucide-react';
   import { FcGoogle } from 'react-icons/fc';
+import { AxiosError } from 'axios';
 
   const LoginForm: React.FC = () => {
     const router = useRouter();
@@ -51,8 +52,8 @@
           router.push("/home");
           
         } catch (err) {
-          toast.error(err?.response?.data?.message || "Something went wrong");
-        }
+          const error = err as AxiosError<{ message: string }>;
+          toast.error(error.response?.data?.message || "Something went wrong");        }
       }
     };
 

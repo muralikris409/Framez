@@ -4,5 +4,6 @@ export interface User{
      image?:string,
      bio?:string,
      followers?:number,
+     password?:string,
      following?:number
 }

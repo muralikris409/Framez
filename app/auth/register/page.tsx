@@ -4,6 +4,7 @@ import { createUser } from '../../actions/userActions';
 import { toast } from 'react-toastify';
 import { log } from 'console';
 import Link from 'next/link';
+import { AxiosError } from 'axios';
 
 const SignupForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -54,8 +55,9 @@ const SignupForm: React.FC = () => {
       await createUser(formData);
       toast("User Created Successfully");
       }catch(err){
+                  const error = err as AxiosError<{ message: string }>;
         
-          toast.error(err?.message);
+          toast.error(error?.message);
           
 
       }

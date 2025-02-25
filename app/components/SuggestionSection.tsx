@@ -58,7 +58,7 @@ const SuggestedGroups = ({ groups }:any) => {
   return (
     <div className="p-4 border rounded-lg shadow-md bg-white m-3">
       <h3 className="text-sm font-semibold">Suggested Groups</h3>
-      {groups.map((group, index) => (
+      {groups.map((group:any, index:number) => (
         <div key={index} className="mt-3 flex items-center">
           <img
             src={group.image||"/groups.gif"}

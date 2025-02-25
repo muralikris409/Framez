@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import jwt from 'jsonwebtoken';
-import { prisma } from '../login/route';
-
+import { PrismaClient } from "@prisma/client";
+const prisma=new PrismaClient();
 export async function POST(req) {
   try {
     const url = new URL(req.url);

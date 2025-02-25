@@ -1,12 +1,10 @@
 "use server"
 import { PrismaClient } from "@prisma/client";
-import { User } from "../ts/UserInterfaces";
 import { storeToken } from "./cookieHandler";
 import { createUser } from "./userActions";
 import jwt from 'jsonwebtoken';
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
-
 
 export async function handleOAuth() {
   const session = (await auth())?.user || {};
@@ -20,10 +18,10 @@ export async function handleOAuth() {
     console.log("testhandle");
 
     const password = generatePassword();
-    session.password = password;
+  
     console.log("testhandle", session);
 
-    const user = await prisma.user.findFirst({ where: { email: session.email } });
+    const user = await prisma.user.findFirst({ where: { email: session.email||undefined } });
     console.log("testhandle",user);
 
     if (user) {
@@ -42,10 +40,10 @@ export async function handleOAuth() {
       }
       console.log("Logged in...");
     } else {
-      await createUser(session);
+      await createUser({...session,password});
       console.log("Initial login...");
 
-      const newUser = await prisma.user.findFirst({ where: { email: session.email } });
+      const newUser = await prisma.user.findFirst({ where: { email: session.email ||undefined} });
 
       if (!newUser) throw new Error("User creation failed. newUser is null.");
       if (!process.env.JWT_SECRET) throw new Error("JWT_SECRET is missing.");
@@ -64,7 +62,7 @@ export async function handleOAuth() {
       }
     }
   } catch (err) {
-    console.error("OAuth Handling Error:", err.stack);
+    console.error("OAuth Handling Error:", err);
   } finally {
     await prisma.$disconnect();
   }

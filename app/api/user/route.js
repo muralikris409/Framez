@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import jwt from 'jsonwebtoken';
-import { prisma } from '../login/route';
-import { log } from "console";
+import { PrismaClient } from "@prisma/client";
 
 export async function GET(req) {
     try {
+      const prisma=new PrismaClient();
       const token = (await req.headers.get("authorization"))?.split(" ")[1].trim();
       console.log("User GET:", token)
       const payload = jwt.verify(token, process.env.JWT_SECRET);
