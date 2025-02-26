@@ -19,24 +19,31 @@ export async function POST(req) {
         OR: [
           { username: { contains: query, mode: "insensitive" } },
           { email: { contains: query, mode: "insensitive" } },
+          
         ],
+       NOT:{
+        id:payload.id
+       }
       },
       select: {
         id: true,
         username: true,
         image: true,
       },
+   
     });
-console.log("test")
+console.log("test",payload)
     const usersWithFollowingStatus = await Promise.all(
       users.map(async (user) => {
+
         const isFollowing = await prisma.follower.findFirst({
           where: {
-            followerId: payload.userId,
+            followerId: payload.id,
             followingId: user.id,
+            
           },
         });
-        console.log("test2")
+        console.log("test2",isFollowing)
 
         return {
           ...user,
@@ -44,7 +51,8 @@ console.log("test")
         };
       })
     );
-
+   console.log(usersWithFollowingStatus);
+   
     return NextResponse.json({ users: usersWithFollowingStatus }, { status: 200 });
   } catch (error) {
     console.error("Error fetching users:", error);

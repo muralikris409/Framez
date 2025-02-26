@@ -4,7 +4,7 @@
   import { toast } from 'react-toastify';
   import { redirect, useRouter } from 'next/navigation';
   import Link from 'next/link';
-  import { signIn, signOut } from "next-auth/react";
+  import { getSession, signIn, signOut } from "next-auth/react";
   import { handleOAuth } from "../../actions/oAuthHandler";
   import { auth } from '@/auth';
   import { storeToken } from '@/app/actions/cookieHandler';
@@ -62,22 +62,37 @@ import { AxiosError } from 'axios';
         console.log("Starting Github Sign-In...");
         
         await signIn("github",{redirectTo:"/home"}) ;   
-          await handleOAuth();
-        } catch (error) {
+        const session = await getSession();
+    
+        if (session && session.user) {
+          await handleOAuth(session.user);
+        } else {
+          console.error("Sign-in failed: No session or user found.");
+        }
+              } catch (error) {
         console.error(JSON.stringify(error));
       }
     };
 
-const handleGoogleSignIn = async () => {
-  try {
-    console.log("Starting Google Sign-In...");
-    await signIn("google",{redirectTo:"/home"});   
-      await handleOAuth();
-     
-  } catch (error) {
-    console.error(JSON.stringify(error));
-  }
-};
+    const handleGoogleSignIn = async () => {
+      try {
+        console.log("Starting Google Sign-In...");
+    
+        await signIn("google", { redirectTo: "/home" });
+    
+        const session = await getSession();
+    
+        if (session && session.user) {
+          await handleOAuth(session.user);
+        } else {
+          console.error("Sign-in failed: No session or user found.");
+        }
+    
+      } catch (error) {
+        console.error("Error during Google Sign-In or OAuth:", JSON.stringify(error));
+      }
+    };
+    
 
 
     return (

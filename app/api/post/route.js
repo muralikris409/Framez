@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import jwt from 'jsonwebtoken';
 import { PrismaClient } from "@prisma/client";
+import { getToken } from "@/app/actions/cookieHandler";
 const prisma=new PrismaClient();
 export async function GET(req) {
     try {
+      console.log("afsal",await getToken("token"))
       const token = (await req.headers.get("authorization"))?.split(" ")[1].trim();
       console.log("token:",token);
 

@@ -5,24 +5,22 @@ import { createUser } from "./userActions";
 import jwt from 'jsonwebtoken';
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
+import { getSession } from "next-auth/react";
 
-export async function handleOAuth() {
-  const session = (await auth())?.user || {};
-
-  console.log("testhandle");
+export async function handleOAuth(session:any) {
+  
+  
   
   const prisma = new PrismaClient();
-  console.log(session);
+  console.log("from auth",session);
 
   try {
-    console.log("testhandle");
 
     const password = generatePassword();
   
-    console.log("testhandle", session);
 
-    const user = await prisma.user.findFirst({ where: { email: session.email||undefined } });
-    console.log("testhandle",user);
+    const user = await prisma.user.findUnique({ where: { email: session.email} });
+    console.log("from user db",user);
 
     if (user) {
       if (!process.env.JWT_SECRET) throw new Error("JWT_SECRET is missing.");
@@ -33,8 +31,11 @@ export async function handleOAuth() {
       );
 
       try {
+        console.log("above tokenstore:",token);
+        
         storeToken("token", token);
-        return NextResponse.redirect(new URL("/home","http://localhost:3000"));
+        console.log("below tokenstore:",token);
+        // return NextResponse.redirect(new URL("/home","http://localhost:3000"));
       } catch (err) {
         console.error("Error storing token:", err);
       }
@@ -43,8 +44,9 @@ export async function handleOAuth() {
       await createUser({...session,password});
       console.log("Initial login...");
 
-      const newUser = await prisma.user.findFirst({ where: { email: session.email ||undefined} });
-
+      const newUser = await prisma.user.findUnique({ where: { email: session.email ||undefined} });
+       console.log("from db after create user",newUser);
+       
       if (!newUser) throw new Error("User creation failed. newUser is null.");
       if (!process.env.JWT_SECRET) throw new Error("JWT_SECRET is missing.");
 
@@ -55,7 +57,7 @@ export async function handleOAuth() {
 
       try {
         storeToken("token", token);
-        return NextResponse.redirect("/home");
+        // return NextResponse.redirect("/home");
 
       } catch (err) {
         console.error("Error storing token:", err);

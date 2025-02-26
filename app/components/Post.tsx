@@ -1,5 +1,5 @@
 "use client";
-import { Heart, MessageCircle, Send } from "lucide-react";
+import { Heart, Loader2Icon, LoaderPinwheel, LucideLoaderPinwheel, MessageCircle, Send } from "lucide-react";
 import { Post } from "../ts/PostInterface";
 import Image from "next/image";
 import CaptionSection from "./Caption";
@@ -18,6 +18,7 @@ const PostComponent: React.FC<PostComponentProps> = ({ post, fetchData }) => {
   const [loadingLike, setLoadingLike] = useState<boolean>(false);
   const [loadingComment, setLoadingComment] = useState<boolean>(false);
   const [showComments, setShowComments] = useState<boolean>(false);
+  const { loading, error, ...user } = useAppSelector(state => state.user);
 
   const currentUser = useAppSelector((state) => state.user.username);
 
@@ -104,7 +105,7 @@ const PostComponent: React.FC<PostComponentProps> = ({ post, fetchData }) => {
       {showComments && (
         <form className="mt-3 flex items-center space-x-2 border-t pt-3" onSubmit={handleCommentSubmit}>
           <Image
-            src={post.author?.image ?? "/user.gif"}
+            src={user?.image ?? "/user.gif"}
             width={32}
             height={32}
             className="rounded-full"
@@ -119,8 +120,8 @@ const PostComponent: React.FC<PostComponentProps> = ({ post, fetchData }) => {
           />
           <button type="submit" className="bg-pink-500 text-white px-4 py-2 rounded-full" disabled={loadingComment}>
             {loadingComment ? (
-              <div className="animate-pulse">
-                <Send />
+              <div className="animate-spin">
+                <LucideLoaderPinwheel />
               </div>
             ) : (
               <Send />
@@ -131,7 +132,7 @@ const PostComponent: React.FC<PostComponentProps> = ({ post, fetchData }) => {
 
       {/* Comments List */}
       {showComments && (
-        <div className="mt-3">
+        <div className="mt-3 max-h-36 overflow-y-scroll scrollbar-hide">
           {post.comments?.map((comment) => (
             <div key={comment.id} className="flex items-center space-x-2">
               <Image

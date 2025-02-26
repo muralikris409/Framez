@@ -3,25 +3,29 @@
 import React, { useEffect, useState } from "react";
 import { getRecommendations } from "../actions/userActions";
 import { axiosInstance } from "../axiosInstance/axios";
+import { LoaderCircle } from "lucide-react";
 
 
 const UserSuggestion = ({ user }: any) => {
   console.log(user);
-  
+  const [loading,setLoading]=useState(false);
   const [isFollowing, setIsFollowing] = useState(user.following || false);
 
   const handleFollowToggle = async () => {
     try {
+      setLoading(true)
       if (isFollowing) {
         await axiosInstance.delete(`/api/follow?followingUsername=${user.username}`);
       } else {
         await axiosInstance.post(`/api/follow?followingUsername=${user.username}`);
       }
 
-      // Toggle local state after successful API call
       setIsFollowing(!isFollowing);
     } catch (error) {
       console.error("Error toggling follow state", error);
+    }
+    finally{
+      setLoading(false);
     }
   };
 
@@ -46,8 +50,9 @@ const UserSuggestion = ({ user }: any) => {
             isFollowing ? "bg-gray-300 text-gray-700" : "bg-pink-500 text-white"
           }`}
         >
-          {isFollowing ? "Following" : "Follow"}
-        </button>
+{loading ? <LoaderCircle className="animate-spin w-full"/> : (isFollowing ? "Following" : "Follow")}
+</button>
+        
       </div>
     </div>
   );
