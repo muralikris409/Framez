@@ -105,7 +105,7 @@ const PostComponent: React.FC<PostComponentProps> = ({ post, fetchData }) => {
       {showComments && (
         <form className="mt-3 flex items-center space-x-2 border-t pt-3" onSubmit={handleCommentSubmit}>
           <Image
-            src={user?.image ?? "/user.gif"}
+            src={user?.image || "/user.gif"}
             width={32}
             height={32}
             className="rounded-full"

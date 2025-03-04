@@ -5,6 +5,7 @@ import { ToastContainer } from "react-toastify";
 import StoreProvider from "./StoreProvider";
 import Header from "./components/Header";
 import SideBar from "./components/SideBar";
+import { SessionProvider } from "next-auth/react";
 
 
 const geistSans = Geist({
@@ -32,11 +33,15 @@ export default function RootLayout({
       <body
         className={` bg-gray-50 ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        
+         <SessionProvider>
+
         <StoreProvider>
         {children}
+
         <ToastContainer/>
+
         </StoreProvider>
+        </SessionProvider>
       </body>
     </html>
   );

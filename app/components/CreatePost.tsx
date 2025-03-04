@@ -1,59 +1,73 @@
 "use client";
 import { useState } from "react";
 import { FaTimes } from "react-icons/fa";
-import { uploadImage } from "../actions/s3Handler"; // Import the server action
+import { uploadImage } from "../actions/s3Handler";
 import { axiosInstance } from "../axiosInstance/axios";
 import { toast } from "react-toastify";
 
 export default function CreatePost() {
   const [isOpen, setIsOpen] = useState(false);
   const [caption, setCaption] = useState("");
-  const [image, setImage] =  useState<string | null>(null);
-  const [imageFile, setImageFile] = useState(null);
+  const [media, setMedia] = useState<string | null>(null);
+  const [mediaFile, setMediaFile] = useState<File | null>(null);
+  const [mediaType, setMediaType] = useState<"image" | "video" | null>(null);
   const [uploading, setUploading] = useState(false);
 
   const toggleModal = () => setIsOpen(!isOpen);
 
-  const handleImageChange = (e:any) => {
+  const handleMediaChange = (e: any) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    setImageFile(file);
+    setMediaFile(file);
+
+    if (file.type.startsWith("image/")) {
+      setMediaType("image");
+    } else if (file.type.startsWith("video/")) {
+      setMediaType("video");
+    } else {
+      alert("Unsupported file type");
+      return;
+    }
 
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => {
-      if (typeof reader.result === "string") 
-       setImage(reader.result);
+      if (typeof reader.result === "string") setMedia(reader.result);
     };
   };
 
   const handlePost = async () => {
-    if (!imageFile) {
-      alert("Please select an image");
+    if (!mediaFile) {
+      alert("Please select an image or video");
       return;
     }
 
     setUploading(true);
 
     const formData = new FormData();
-    formData.append("file", imageFile);
+    formData.append("file", mediaFile);
 
     const response = await uploadImage(formData);
 
     if (response?.url) {
-      console.log("Uploaded Image URL:", response.url);
-      await axiosInstance.post("api/post",{
+      console.log("Uploaded Media URL:", response.url);
+      await axiosInstance.post("api/post", {
         caption,
-        imageUrl:response?.url,
+        mediaUrl: response.url,
+        mediaType: mediaType,
       });
-      toast("Post uploaded")
+      toast("Post uploaded");
     } else {
       alert(response?.error || "Upload failed");
     }
 
     setUploading(false);
     setIsOpen(false);
+    setCaption("");
+    setMedia(null);
+    setMediaFile(null);
+    setMediaType(null);
   };
 
   return (
@@ -76,20 +90,28 @@ export default function CreatePost() {
             </button>
             <h2 className="text-lg font-bold mb-4 text-center">Create Post</h2>
             <div className="mb-4">
-              {image ? (
-                <img
-                  src={image}
-                  alt="Preview"
-                  className="w-full h-64 object-cover rounded-lg mb-2"
-                />
+              {media ? (
+                mediaType === "image" ? (
+                  <img
+                    src={media}
+                    alt="Preview"
+                    className="w-full h-64 object-cover rounded-lg mb-2"
+                  />
+                ) : (
+                  <video
+                    src={media}
+                    controls
+                    className="w-full h-64 object-cover rounded-lg mb-2"
+                  />
+                )
               ) : (
                 <label className="flex items-center justify-center w-full h-64 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer">
-                  <span className="text-gray-400">Upload Image</span>
+                  <span className="text-gray-400">Upload Image or Video</span>
                   <input
                     type="file"
                     className="hidden"
-                    accept="image/*"
-                    onChange={handleImageChange}
+                    accept="image/*,video/*"
+                    onChange={handleMediaChange}
                   />
                 </label>
               )}

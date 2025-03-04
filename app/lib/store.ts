@@ -1,12 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit'
 import  userSlice  from './userSlice'
 import  searchSlice  from './searchSlice'
-
+import chatSlice from './chatSlice';
 export const makeStore = () => {
   return configureStore({
     reducer: {
       user:userSlice,
-      search:searchSlice
+      search:searchSlice,
+      chat: chatSlice,
+
+
     },
   })
 }

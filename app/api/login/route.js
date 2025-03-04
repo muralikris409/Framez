@@ -25,10 +25,7 @@ export async function POST(req) {
       // { expiresIn: '1h' }
     );
     
-
-
-   
-
+    
     return new NextResponse(JSON.stringify({ message: 'Login successful',token }), {
       status: 200,
     });

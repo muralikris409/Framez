@@ -31,10 +31,11 @@ export async function handleOAuth(session:any) {
       );
 
       try {
-        console.log("above tokenstore:",token);
+        // console.log("above tokenstore:",token);
         
-        storeToken("token", token);
-        console.log("below tokenstore:",token);
+        await storeToken("token", token);
+        console.log("below tokenstore in login:",token);
+        return token;
         // return NextResponse.redirect(new URL("/home","http://localhost:3000"));
       } catch (err) {
         console.error("Error storing token:", err);
@@ -56,7 +57,9 @@ export async function handleOAuth(session:any) {
       );
 
       try {
-        storeToken("token", token);
+        await storeToken("token", token);
+        return token;
+
         // return NextResponse.redirect("/home");
 
       } catch (err) {

@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../lib/hooks';
 import { closeModal, setSearchText } from '../lib/searchSlice';
 import { axiosInstance } from '../axiosInstance/axios';
-import { FcCancel } from 'react-icons/fc';
 import { LoaderCircle, X } from 'lucide-react';
 
 const SearchUsersModal = () => {
@@ -83,7 +82,7 @@ const SearchUsersModal = () => {
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
                     {user.image ? (
-                      <img src={user.image} alt={user.username} className="w-full h-full rounded-full" />
+                      <img src={user.image||"/user.gif"} alt={user.username} className="w-full h-full rounded-full" />
                     ) : (
                       <span className="text-gray-600">U</span>
                     )}
