@@ -94,3 +94,47 @@ export async function getRecommendations() {
 
   return recommendations;
 }
+
+export async function fetchUserData(username:string) {
+  const userData=await prisma.user.findUnique(
+    {
+      where:{
+        username:username
+      },
+      include:{
+        followers:true,
+        following:{
+          select:{
+            follower:{
+              select:{
+                username:true,
+                image:true
+              }
+            }
+          }
+        },
+        posts:true,
+      }
+    }
+  );
+  return userData;
+     
+}
+
+
+export async function fetchFollowPosts(username:string) {
+  const posts=await prisma.post.findMany(
+    {
+     where:{
+        author:{
+          username:username
+        }
+     },
+     include:{
+      author:true,
+     }
+    }
+  );
+  return posts;
+     
+}

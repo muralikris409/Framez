@@ -43,7 +43,7 @@ function ChatSection({ onChatSelect }: { onChatSelect: (chat: any) => void }) {
               onClick={() => onChatSelect(chat)}
             >
               <div className="flex w-3/4">
-                <img src={chat.image || "/user.gif"} alt={chat.username} className="w-8 h-8 rounded-full" />
+                <img src={chat.image || "/profile.png"} alt={chat.username} className="w-8 h-8 rounded-full" />
                 <div className="w-full mx-2">
                   <p className="text-gray-700 font-medium text-sm truncate">{chat.username}</p>
                   <p className="text-gray-500 text-xs truncate">Tap to chat</p>
@@ -63,7 +63,7 @@ function ChatView({ chat, onClose }: { chat: any; onClose: () => void }) {
     <div className="h-[35rem] w-64 bg-gray-100 flex flex-col p-4 rounded-md">
       <div className="flex items-center space-x-3 mb-4">
         <ChevronLeft className="cursor-pointer" onClick={onClose} />
-        <img src={chat.image || "/user.gif"} alt={chat.username} className="w-8 h-8 rounded-full" />
+        <img src={chat.image || "/profile.png"} alt={chat.username} className="w-8 h-8 rounded-full" />
         <p className="text-gray-700 font-medium truncate">{chat.username}</p>
       </div>
       <div className="flex-1  rounded-md p-4 overflow-y-auto">

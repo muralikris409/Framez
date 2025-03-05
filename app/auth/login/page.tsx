@@ -31,7 +31,7 @@ const LoginForm: React.FC = () => {
     };
     processOAuth();
   }, [status, session, router]);
-
+  
   const validateEmail = (email: string): boolean => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(email);

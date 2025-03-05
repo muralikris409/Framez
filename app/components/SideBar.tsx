@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Home, Search, Users, Star, MessageCircle, Settings } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { getFollowing } from "@/app/actions/userActions";
+import Link from 'next/link'
 
 const menuItems = [
   { name: "Home", icon: Home },
@@ -65,16 +66,17 @@ function Contacts() {
           <p className="text-gray-500 text-sm">No followings found.</p>
         ) : (
           followings.map((contact) => (
-            <div key={contact.id} className="flex items-center space-x-3 p-2 hover:bg-gray-100 rounded-md cursor-pointer">
+            
+            <Link href={`/profile/${contact.username}`} key={contact.id} className="flex items-center space-x-3 p-2 hover:bg-gray-100 rounded-md cursor-pointer">
               <img 
-                src={contact.image || "/user.gif"} 
+                src={contact.image || "/profile.png"} 
                 alt={contact.username} 
                 className="w-8 h-8 rounded-full" 
               />
               <div>
                 <p className="text-gray-700 font-medium text-sm">{contact.username}</p>
               </div>
-            </div>
+            </Link>
           ))
         )}
       </div>

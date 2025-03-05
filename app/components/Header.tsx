@@ -9,6 +9,7 @@ import { fetchUserData } from '../lib/userSlice';
 import { setSearchText, openModal } from '../lib/searchSlice';
 import { signOut } from 'next-auth/react';
 import { deleteToken } from '../actions/cookieHandler';
+import { LoaderCircle } from 'lucide-react';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -66,7 +67,7 @@ const buttonRef = useRef<HTMLButtonElement | null>(null);
       dispatch(openModal());
     }
   };
-
+  
   return (
     <nav className="bg-white border-b border-gray-200 max-h-14">
       <div className="md:hidden max-w-screen-xl flex flex-wrap items-center justify-between mx-auto px-4 pt-2">
@@ -98,7 +99,7 @@ const buttonRef = useRef<HTMLButtonElement | null>(null);
         className="hidden md:flex items-center space-x-2 bg-gray-200 rounded-full px-3 py-1 focus:ring-4 focus:ring-gray-300"
         onClick={toggleDropdown}
       >
-        <span className="text-sm font-medium text-gray-700">{user?.username || 'loading..'}</span>
+        <span className="text-sm font-medium text-gray-700">{user?.username || <LoaderCircle className='animate-spin'/>}</span>
         <Image className="w-8 h-8 rounded-full" src={user?.image||"/user.gif"} alt="User Photo" width={32} height={32} />
       </button>
 

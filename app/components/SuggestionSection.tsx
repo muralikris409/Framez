@@ -34,7 +34,7 @@ const UserSuggestion = ({ user }: any) => {
       <h3 className="text-sm font-semibold">You might like</h3>
       <div className="flex items-center mt-2">
         <img
-          src={user.image || "/user.gif"}
+          src={user.image || "/profile.png"}
           alt={user.username}
           className="w-10 h-10 rounded-full"
         />

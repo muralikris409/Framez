@@ -11,6 +11,7 @@ import { FaHeart } from "react-icons/fa";
 interface PostComponentProps {
   post: Post;
   fetchData: () => void;
+  
 }
 
 const PostComponent: React.FC<PostComponentProps> = ({ post, fetchData }) => {
@@ -38,6 +39,9 @@ const PostComponent: React.FC<PostComponentProps> = ({ post, fetchData }) => {
 
   const handleCommentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if(!commentText){
+              return;
+    }
     setLoadingComment(true);
     try {
       await axiosInstance.post("/api/comment", {
@@ -60,7 +64,7 @@ const PostComponent: React.FC<PostComponentProps> = ({ post, fetchData }) => {
       {/* User Info */}
       <div className="flex items-center space-x-3">
         <Image
-          src={post.author?.image ?? "/user.gif"}
+          src={post.author?.image ?? "/profile.png"}
           alt={post.author?.username ?? "User"}
           width={40}
           height={40}
@@ -68,8 +72,8 @@ const PostComponent: React.FC<PostComponentProps> = ({ post, fetchData }) => {
         />
         <div>
           <h3 className="font-semibold">{post.author?.username || "Unknown User"}</h3>
-          <p className="text-sm text-gray-500">{post.createdAt}</p>
-        </div>
+          <p className="text-sm text-gray-500">{new Date(post.createdAt).toLocaleString()}</p>
+          </div>
       </div>
 
       {/* Post Image */}
@@ -105,7 +109,7 @@ const PostComponent: React.FC<PostComponentProps> = ({ post, fetchData }) => {
       {showComments && (
         <form className="mt-3 flex items-center space-x-2 border-t pt-3" onSubmit={handleCommentSubmit}>
           <Image
-            src={user?.image || "/user.gif"}
+            src={user?.image || "/profile.png"}
             width={32}
             height={32}
             className="rounded-full"
@@ -134,9 +138,9 @@ const PostComponent: React.FC<PostComponentProps> = ({ post, fetchData }) => {
       {showComments && (
         <div className="mt-3 max-h-36 overflow-y-scroll scrollbar-hide">
           {post.comments?.map((comment) => (
-            <div key={comment.id} className="flex items-center space-x-2">
+            <div key={comment.id} className="flex items-center space-x-2 p-0.5">
               <Image
-                src={comment.author?.image ?? "/user.gif"}
+                src={comment.author?.image ?? "/profile.png"}
                 width={32}
                 height={32}
                 className="rounded-full"
