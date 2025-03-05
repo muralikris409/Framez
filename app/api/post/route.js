@@ -76,19 +76,20 @@ export async function GET(req) {
       const payload = jwt.verify(token, process.env.JWT_SECRET);
       if (!payload) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
       
-      const { caption, imageUrl } = await req.json();
+      const { caption, mediaUrl } = await req.json();
       const userId = payload.id;
-  
       const newPost = await prisma.post.create({
         data: {
           caption,
-          imageUrl,
+          imageUrl:mediaUrl,
           authorId: userId
         }
       });
   
       return NextResponse.json(newPost, { status: 201 });
     } catch (error) {
+      console.log(error);
+      
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
   }

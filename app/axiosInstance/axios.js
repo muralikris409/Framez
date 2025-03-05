@@ -4,7 +4,7 @@ import { getToken } from '../actions/cookieHandler';
 export const axiosInstance = axios.create({
   baseURL: 'http://localhost:3000',
   // baseURL:process.env.API_BASE_URL,
-  timeout:5000,
+  timeout:15000,
 })
 
 axiosInstance.interceptors.request.use(async(config) => {

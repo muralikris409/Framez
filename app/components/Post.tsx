@@ -77,10 +77,14 @@ const PostComponent: React.FC<PostComponentProps> = ({ post, fetchData }) => {
       </div>
 
       {/* Post Image */}
-      {post.imageUrl && (
+      {!post.imageUrl.endsWith(".mp4") ?(
         <div className="mt-3">
-          <Image src={post.imageUrl} alt="Post" width={400} height={250} className="rounded-lg" />
+          {<Image src={post.imageUrl} alt="Post" width={400} height={250} className="rounded-lg" />}
         </div>
+      ):(
+        <div className="mt-3">
+        {<video  src={post.imageUrl}   width={400} height={250} className="rounded-lg" controls autoPlay loop playsInline />}
+      </div>
       )}
 
       <CaptionSection caption={post.caption} />

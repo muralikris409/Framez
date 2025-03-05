@@ -12,11 +12,11 @@ export default function CreatePost() {
   const [mediaFile, setMediaFile] = useState<File | null>(null);
   const [mediaType, setMediaType] = useState<"image" | "video" | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
 
   const toggleModal = () => setIsOpen(!isOpen);
 
-  const handleMediaChange = (e: any) => {
-    const file = e.target.files[0];
+  const handleMediaChange = (file: File) => {
     if (!file) return;
 
     setMediaFile(file);
@@ -35,6 +35,31 @@ export default function CreatePost() {
     reader.onload = () => {
       if (typeof reader.result === "string") setMedia(reader.result);
     };
+  };
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) handleMediaChange(file);
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLLabelElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLLabelElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLLabelElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) handleMediaChange(file);
   };
 
   const handlePost = async () => {
@@ -105,13 +130,26 @@ export default function CreatePost() {
                   />
                 )
               ) : (
-                <label className="flex items-center justify-center w-full h-64 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer">
-                  <span className="text-gray-400">Upload Image or Video</span>
+                <label
+                  className={`flex items-center justify-center w-full h-64 border-2 ${
+                    dragActive
+                      ? "border-pink-500 bg-pink-50"
+                      : "border-dashed border-gray-300"
+                  } rounded-lg cursor-pointer`}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                >
+                  <span className="text-gray-400">
+                    {dragActive
+                      ? "Drop file here..."
+                      : "Drag & Drop or Click to Upload Image or Video"}
+                  </span>
                   <input
                     type="file"
                     className="hidden"
                     accept="image/*,video/*"
-                    onChange={handleMediaChange}
+                    onChange={handleFileInputChange}
                   />
                 </label>
               )}
