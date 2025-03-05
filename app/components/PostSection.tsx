@@ -5,6 +5,7 @@ import PostComponent from './Post'; // Ensure the correct import path
 import { Post } from '../ts/PostInterface';
 import { axiosInstance } from '../axiosInstance/axios';
 import CreatePost from './CreatePost';
+import { Loader2 } from 'lucide-react';
 
 export default function PostSection() {
   const [posts, setPosts] = useState<Array<Post>>([]);
@@ -29,7 +30,9 @@ export default function PostSection() {
   return (
     <div className='grid grid-cols-1 gap-4 items-center p-2 overflow-y-scroll scrollbar-hide max-h-screen'>
       {loading ? (
-        <div className='text-blue-500'>Loading...</div>
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/30 backdrop-blur-md rounded-lg">
+          <Loader2 className="h-12 w-12 animate-spin text-gray-800" />
+        </div>
       ) : (
         <>
         <CreatePost/>

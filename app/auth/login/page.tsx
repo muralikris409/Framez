@@ -7,12 +7,14 @@ import Link from 'next/link';
 import { getSession, signIn, signOut, useSession } from "next-auth/react";
 import { handleOAuth } from "../../actions/oAuthHandler";
 import { storeToken } from '@/app/actions/cookieHandler';
-import { GithubIcon } from 'lucide-react';
+import { GithubIcon, Loader2 } from 'lucide-react';
 import { FcGoogle } from 'react-icons/fc';
 import { AxiosError } from 'axios';
 
 const LoginForm: React.FC = () => {
   const router = useRouter();
+  const [loading, setLoading] = useState<boolean>(false);
+
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [errors, setErrors] = useState<{ email: string; password: string }>({ email: '', password: '' });
@@ -60,6 +62,8 @@ const LoginForm: React.FC = () => {
     } else {
       setErrors({ email: '', password: '' });
       try {
+        setLoading(true);
+
         const response = await axios.post("/api/login", { email, password });
         toast(response?.data.message);
         storeToken("token", response?.data?.token);
@@ -69,30 +73,48 @@ const LoginForm: React.FC = () => {
         const error = err as AxiosError<{ message: string }>;
         toast.error(error.response?.data?.message || "Something went wrong");
       }
+      finally{
+        setLoading(false);
+      }
     }
   };
 
   const handleGithubSignIn = async () => {
     try {
+      setLoading(true);
       console.log("Starting Github Sign-In...");
       await signIn("github", { callbackUrl: "/home" });
     } catch (error) {
       console.error(JSON.stringify(error));
+    }finally{
+      setLoading(false);
+
     }
   };
 
   const handleGoogleSignIn = async () => {
     try {
+      setLoading(true);
+
       console.log("Starting Google Sign-In...");
       await signIn("google", { callbackUrl: "/home" });
     } catch (error) {
       console.error("Error during Google Sign-In:", JSON.stringify(error));
+    }finally{
+      setLoading(false);
     }
   };
-
+  
   return (
-    <div className="h-screen md:h-[41rem] shadow-md grid justify-center items-center">
-      <div className="flex w-96 bg-white flex-col space-y-5 rounded-lg border py-10 px-5 shadow-xl mx-auto">
+    <div className="relative h-screen md:h-[41rem] shadow-md grid justify-center items-center">
+      
+      {loading && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/30 backdrop-blur-md rounded-lg">
+          <Loader2 className="h-12 w-12 animate-spin text-gray-800" />
+        </div>
+      )}
+
+      <div className="flex w-96 bg-white flex-col space-y-5 rounded-lg border py-10 px-5 shadow-xl mx-auto relative">
         <div className="mx-auto mb-2 space-y-3">
           <h1 className="text-3xl font-bold text-gray-700">Log into Framez</h1>
           <p className="text-gray-500">Login to access your account</p>
