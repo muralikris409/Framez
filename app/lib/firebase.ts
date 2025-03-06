@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
-import { getAnalytics } from 'firebase/analytics';
+import { getAnalytics, isSupported as isAnalyticsSupported } from 'firebase/analytics';
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 
 // Your web app's Firebase configuration
@@ -16,7 +16,18 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+
+// Initialize Analytics safely (only on supported environments)
+if (typeof window !== 'undefined') {
+  isAnalyticsSupported().then((supported) => {
+    if (supported) {
+      const analytics = getAnalytics(app);
+      console.log('Firebase Analytics initialized');
+    } else {
+      console.log('Firebase Analytics is not supported in this environment.');
+    }
+  });
+}
 
 // Initialize Firebase Cloud Messaging
 const messaging = getMessaging(app);
