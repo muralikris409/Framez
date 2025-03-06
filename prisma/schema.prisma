@@ -12,7 +12,7 @@ model User {
   username       String    @unique
   email          String    @unique
   password       String
-  image     String?   // URL to profile picture
+  image          String?   // URL to profile picture
   bio            String?
   posts          Post[]
   comments       Comment[]
@@ -21,8 +21,9 @@ model User {
   following      Follower[] @relation("Following")
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
-   conversations  ConversationParticipant[] 
+  conversations  ConversationParticipant[] 
   messages       Message[]   
+  fcmTokens      FCMToken[]
 }
 
 model Post {
@@ -64,6 +65,7 @@ model Follower {
   following      User     @relation("Following", fields: [followingId], references: [id])
   createdAt      DateTime @default(now())
 }
+
 model Conversation {
   id             String   @id @default(uuid())
   participants   ConversationParticipant[]
@@ -88,5 +90,13 @@ model Message {
   sender         User     @relation(fields: [senderId], references: [id])
   conversationId String
   conversation   Conversation @relation(fields: [conversationId], references: [id])
+  createdAt      DateTime @default(now())
+}
+
+model FCMToken {
+  id             String   @id @default(uuid())
+  token          String   @unique
+  userId         String
+  user           User     @relation(fields: [userId], references: [id])
   createdAt      DateTime @default(now())
 }

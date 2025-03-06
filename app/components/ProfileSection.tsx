@@ -71,7 +71,7 @@ export function ProfileSection(user:any) {
       {/* Placeholder for posts or other content */}
       <div className="flex flex-row justify-between overflow-y-scroll scrollbar-hide h-4/5">
       <div className="w-3/5 max-w-3/4">
-       <PostSection username={user.username}/>
+       <PostSection username={user.username} />
        </div>
        <div className="w-2/5 max-w-2/5 overflow-y-scroll h-4/5 scrollbar-hide">
        <ProfileFollowing followings={user.following} />

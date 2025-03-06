@@ -9,7 +9,7 @@ import { User } from "../ts/UserInterfaces";
 const prisma = new PrismaClient();
 const SECRET_KEY = process.env.JWT_SECRET as string; // Store in .env
 
-async function verifyToken() {
+export async function verifyToken() {
   const token = await getToken("token");
   if (!token) throw new Error("Unauthorized");
 
@@ -132,6 +132,8 @@ export async function fetchFollowPosts(username:string) {
      },
      include:{
       author:true,
+      likes:true,
+      comments:true
      }
     }
   );
