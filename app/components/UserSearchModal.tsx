@@ -98,7 +98,7 @@ const SearchUsersModal = () => {
               </div>
             ))
           ) : (
-            <p className="text-center">No users found.</p>
+            <p className="text-center">No users found..</p>
           )}
         </div>
       </div>
