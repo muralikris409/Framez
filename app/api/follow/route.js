@@ -1,15 +1,17 @@
 import { NextResponse } from "next/server";
 import jwt from 'jsonwebtoken';
 import { PrismaClient } from "@prisma/client";
+import {sendNotificationToUsers} from '../../actions/sendNotification.ts'
 const prisma=new PrismaClient();
 export async function POST(req) {
   try {
     const url = new URL(req.url);
     const followingUsername = url.searchParams.get("followingUsername");
     const token = (await req.headers.get("authorization"))?.split(" ")[1].trim();
-   
+    
     const payload = jwt.verify(token, process.env.JWT_SECRET);
     const userId=payload.id;
+
     if (!payload) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const followingUser = await prisma.user.findUnique({
@@ -35,7 +37,7 @@ export async function POST(req) {
     await prisma.follower.create({
       data: { followerId: userId, followingId: followingUser.id }
     });
-    
+    sendNotificationToUsers({usernames:[followingUsername],title:"Framez",message:"Murali followed you"});
     return NextResponse.json({ message: "Followed successfully" }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

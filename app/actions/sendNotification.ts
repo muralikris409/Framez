@@ -3,7 +3,7 @@
 import admin from 'firebase-admin';
 import { PrismaClient } from '@prisma/client';
 import { verifyToken } from './userActions';
-
+import { SendNotificationProps } from '../ts/props';
 const prisma = new PrismaClient();
 
 if (!admin.apps.length) {
@@ -13,20 +13,13 @@ if (!admin.apps.length) {
   });
 }
 
-interface SendNotificationProps {
-  usernames: string[];
-  title: string;
-  message: string;
-  link: string;
-  logo: string;
-}
 
 export async function sendNotificationToUsers({
   usernames,
   title,
   message,
-  link,
-  logo,
+  link="https://framez-git-development-muralis-projects-156594ad.vercel.app/home",
+  logo="https://img.icons8.com/?size=80&id=eSXhmlFhLvqI&format=png",
 }: SendNotificationProps) {
   try {
     await verifyToken();
