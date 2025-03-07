@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import { requestFCMToken } from "./lib/firebase";
 import { registerFcmToken } from "./actions/registerUserFCMToken";
+import { redirect } from "next/navigation";
 
 export default function Page() {
 
@@ -22,7 +23,8 @@ export default function Page() {
         registerFcmToken(token);
       }
     });
+    
   }, []);
-
+  redirect("/home");
   return <></>;
 }

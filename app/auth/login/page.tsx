@@ -27,7 +27,7 @@ const LoginForm: React.FC = () => {
         if (token) {
           await storeToken("token", token);
           console.log("Token stored:", token);
-          router.push("/home");
+          router.push("/");
         }
       }
     };
@@ -67,7 +67,7 @@ const LoginForm: React.FC = () => {
         const response = await axios.post("/api/login", { email, password });
         toast(response?.data.message);
         storeToken("token", response?.data?.token);
-        router.push("/home");
+        router.push("/");
 
       } catch (err) {
         const error = err as AxiosError<{ message: string }>;
