@@ -2,29 +2,32 @@
 import { useEffect } from "react";
 import { requestFCMToken } from "./lib/firebase";
 import { registerFcmToken } from "./actions/registerUserFCMToken";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
+  const router = useRouter();
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
-      navigator.serviceWorker
-        .register('/firebase-messaging-sw.js')
-        .then((registration) => {
+    const setupFCM = async () => {
+      if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+        try {
+          const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
           console.log('Service Worker registered with scope:', registration.scope);
-        })
-        .catch((err) => {
+        } catch (err) {
           console.error('Service Worker registration failed:', err);
-        });
-    }
-
-    requestFCMToken().then((token) => {
-      if (token) {
-        registerFcmToken(token);
+        }
       }
-    });
-    
+
+      const token = await requestFCMToken();
+      if (token) {
+        await registerFcmToken(token);
+      }
+
+      router.replace("/home");
+    };
+
+    setupFCM();
   }, []);
-  redirect("/home");
+
   return <></>;
 }
