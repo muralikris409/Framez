@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import jwt from 'jsonwebtoken';
 import { PrismaClient } from "@prisma/client";
 import { getToken } from "@/app/actions/cookieHandler";
+import { getFollowing } from "@/app/actions/userActions";
 const prisma=new PrismaClient();
 export async function GET(req) {
     try {
@@ -27,12 +28,12 @@ export async function GET(req) {
           author: { select: { username: true, image: true } },
           likes: {
             include: {
-              user: { select: { username: true, image: true } }, // Fetch user info for likes
+              user: { select: { username: true, image: true } }, 
             },
           },
           comments: {
             include: {
-              author: { select: { username: true, image: true } }, // Fetch author info for comments
+              author: { select: { username: true, image: true } }, 
             },
           },
         },
@@ -85,7 +86,12 @@ export async function GET(req) {
           authorId: userId
         }
       });
-  
+      const followings=await getFollowing();
+      const usernames=followings.map((_,i)=>{
+        return _.username;
+      })
+      await sendNotificationToUsers({usernames:[usernames],title:"Framez",message:`${username} followed you`});
+      
       return NextResponse.json(newPost, { status: 201 });
     } catch (error) {
       console.log(error);

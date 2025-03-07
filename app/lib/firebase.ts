@@ -1,21 +1,74 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { initializeApp } from 'firebase/app';
+import { getAnalytics, isSupported as isAnalyticsSupported } from 'firebase/analytics';
+import { getMessaging, getToken, onMessage, Messaging } from 'firebase/messaging';
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyCRjI_gc_blkL57Arv0yn3q8btexal5KLI",
-  authDomain: "framez-38a41.firebaseapp.com",
-  projectId: "framez-38a41",
-  storageBucket: "framez-38a41.firebasestorage.app",
-  messagingSenderId: "3193071616",
-  appId: "1:3193071616:web:ffa115b31c289b192c50e5",
-  measurementId: "G-0P39GG1QTM"
+  apiKey: 'AIzaSyBfZXBpTRqrbvu5TlXmzs-PnkBKOy15fzA',
+  authDomain: 'framez-dd4ba.firebaseapp.com',
+  projectId: 'framez-dd4ba',
+  storageBucket: 'framez-dd4ba.firebasestorage.app',
+  messagingSenderId: '210148100196',
+  appId: '1:210148100196:web:0d16180448616bb8b9f771',
+  measurementId: 'G-SBB92PDCJ1'
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+
+// Initialize Analytics safely (only on supported environments)
+if (typeof window !== 'undefined') {
+  isAnalyticsSupported().then((supported) => {
+    if (supported) {
+      const analytics = getAnalytics(app);
+      console.log('Firebase Analytics initialized');
+    } else {
+      console.log('Firebase Analytics is not supported in this environment.');
+    }
+  });
+}
+
+// Safe function to get messaging instance
+const getMessagingInstance = (): Messaging | null => {
+  if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+    return getMessaging(app);
+  }
+  return null;
+};
+
+// Request FCM Token
+export const requestFCMToken = async () => {
+  try {
+    const messaging = getMessagingInstance();
+    if (!messaging) {
+      console.warn('Messaging is not supported in this environment.');
+      return null;
+    }
+
+    const token = await getToken(messaging, {
+      vapidKey: process.env.NEXT_PUBLIC_FIREBASE_FCM_VAPID_KEY,
+    });
+
+    if (token) {
+      console.log('FCM Token:', token);
+      return token;
+    } else {
+      console.warn('No registration token available. Request permission to generate one.');
+    }
+  } catch (error) {
+    console.error('An error occurred while retrieving token. ', error);
+  }
+};
+
+// Listen for incoming messages
+export const onMessageListener = () =>
+  new Promise((resolve) => {
+    const messaging = getMessagingInstance();
+    if (!messaging) {
+      console.warn('Messaging is not supported in this environment.');
+      return;
+    }
+
+    onMessage(messaging, (payload) => {
+      console.log('Message received. ', payload);
+      resolve(payload);
+    });
+  });

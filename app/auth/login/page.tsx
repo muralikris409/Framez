@@ -27,7 +27,7 @@ const LoginForm: React.FC = () => {
         if (token) {
           await storeToken("token", token);
           console.log("Token stored:", token);
-          router.push("/home");
+          router.push("/");
         }
       }
     };
@@ -67,11 +67,12 @@ const LoginForm: React.FC = () => {
         const response = await axios.post("/api/login", { email, password });
         toast(response?.data.message);
         storeToken("token", response?.data?.token);
-        router.push("/home");
+        router.push("/");
 
       } catch (err) {
         const error = err as AxiosError<{ message: string }>;
-        toast.error(error.response?.data?.message || "Something went wrong");
+        console.log(error);
+        toast.error(error?.message||error.response?.data?.message || "Something went wrong");
       }
       finally{
         setLoading(false);
@@ -121,15 +122,15 @@ const LoginForm: React.FC = () => {
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div>
+          <div className='mt-2'>
             <input type="text" id="email" value={email} onChange={(e) => setEmail(e.target.value)} className={`border-1 peer block w-full rounded-lg border ${errors.email ? 'border-red-500' : 'border-gray-300'} bg-transparent px-2.5 pb-2.5 pt-4 text-sm text-gray-900 focus:border-blue-600 focus:outline-none`} placeholder="Enter Your Email" />
             {errors.email && <p className="text-red-500 text-xs">{errors.email}</p>}
           </div>
-          <div>
+          <div className='mt-2'>
             <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} className={`border-1 peer block w-full rounded-lg border ${errors.password ? 'border-red-500' : 'border-gray-300'} bg-transparent px-2.5 pb-2.5 pt-4 text-sm text-gray-900 focus:border-blue-600 focus:outline-none`} placeholder="Enter Your Password" />
             {errors.password && <p className="text-red-500 text-xs">{errors.password}</p>}
           </div>
-          <button type="submit" className="w-full rounded-lg bg-gray-800 hover:scale-95 py-3 font-bold text-white">Login</button>
+          <button type="submit" className="w-full rounded-lg bg-gray-800 hover:scale-95 py-3 font-bold text-white mt-2">Login</button>
         </form>
 
         <button onClick={handleGithubSignIn} className="w-full flex items-center justify-center rounded-lg bg-gray-900 hover:scale-95 py-3 font-bold text-white mt-3">

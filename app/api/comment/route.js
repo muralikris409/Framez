@@ -9,6 +9,18 @@ export async function POST(req) {
       if (!payload) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
       const { postId, text } = await req.json();
       const userId = payload.id;
+      const username= await prisma.post.findUnique({
+        where:{
+          id:postId
+        },
+        select:{
+          author:{
+            select:{
+              username:true,
+            }
+          }
+        }
+      });
       const newComment = await prisma.comment.create({
         data: {
           text,
@@ -16,7 +28,8 @@ export async function POST(req) {
           authorId: userId
         }
       });
-  
+      await sendNotificationToUsers({usernames:[username.author.username],title:"Framez",message:`${username} liked your post`});
+
       return NextResponse.json(newComment, { status: 201 });
     } catch (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });

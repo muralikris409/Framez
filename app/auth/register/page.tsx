@@ -5,6 +5,8 @@ import { toast } from 'react-toastify';
 import { log } from 'console';
 import Link from 'next/link';
 import { AxiosError } from 'axios';
+import { redirect } from 'next/dist/server/api-utils';
+import { useRouter } from 'next/navigation';
 
 const SignupForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -28,7 +30,7 @@ const SignupForm: React.FC = () => {
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     return regex.test(password);
   };
-
+ const router=useRouter();
   const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     let usernameError = '';
@@ -53,7 +55,8 @@ const SignupForm: React.FC = () => {
       setErrors({ username: '', email: '', password: '' });
       try{
       await createUser(formData);
-      toast("User Created Successfully");
+      toast("User created successfully redirecting to login...");
+      setTimeout(()=>router.push("/login"),1000);
       }catch(err){
                   const error = err as AxiosError<{ message: string }>;
         

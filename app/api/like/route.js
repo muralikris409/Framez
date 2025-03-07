@@ -10,7 +10,18 @@ export async function POST(req) {
 
     const { postId } = await req.json();
     const userId = payload.id;
-
+    const username= await prisma.post.findUnique({
+      where:{
+        id:postId
+      },
+      select:{
+        author:{
+          select:{
+            username:true,
+          }
+        }
+      }
+    });
     const existingLike = await prisma.like.findFirst({
       where: { userId, postId }
     });
@@ -24,6 +35,8 @@ export async function POST(req) {
         await prisma.like.create({
           data: { userId, postId }
         });
+            await sendNotificationToUsers({usernames:[username.author.username],title:"Framez",message:`${username} liked your post`});
+        
       }
 
    
