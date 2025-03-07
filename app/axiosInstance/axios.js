@@ -2,8 +2,8 @@ import axios from 'axios'
 import { useAppSelector } from '../lib/hooks';
 import { getToken } from '../actions/cookieHandler';
 export const axiosInstance = axios.create({
-  baseURL: 'http://localhost:3000',
-  // baseURL:process.env.API_BASE_URL,
+  // baseURL: 'http://localhost:3000',
+  baseURL:process.env.API_BASE_URL,
   timeout:15000,
 })
 
