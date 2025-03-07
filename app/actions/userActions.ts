@@ -45,7 +45,7 @@ export async function createUser(user: any) {
   }
 }
 
-async function fetchUserRelations(type: "followers" | "following") {
+ async function fetchUserRelations(type: "followers" | "following") {
   const { id:userId } = await verifyToken();
 console.log("useridtest",userId);
 
@@ -63,9 +63,8 @@ export const getFollowers = async () => fetchUserRelations("followers");
 
 export const getFollowing = async () => fetchUserRelations("following");
 export async function getRecommendations() {
-  const { id:userId } = await verifyToken();
-  console.log(userId);
-  
+  const { id: userId } = await verifyToken();
+
   const followingIds = (
     await prisma.follower.findMany({
       where: { followerId: userId },
@@ -73,27 +72,38 @@ export async function getRecommendations() {
     })
   ).map(f => f.followingId);
 
-  const recommendations = await prisma.follower.findMany({
+  const recommendationsRaw = await prisma.follower.findMany({
     where: {
       followerId: { in: followingIds },
       followingId: { not: userId, notIn: followingIds },
-      
     },
-    include: { following: { select: { id: true, username: true, image: true } } },
-  }).then(mutuals => mutuals.map(m => m.following));
+    include: {
+      following: {
+        select: { id: true, username: true, image: true },
+      },
+    },
+  });
+
+  const recommendations = Array.from(
+    new Map(
+      recommendationsRaw.map(m => [m.following.id, m.following])
+    ).values()
+  );
+
   if (recommendations.length === 0) {
     return await prisma.user.findMany({
       where: {
         id: { not: userId, notIn: followingIds },
       },
       select: { id: true, username: true, image: true },
-      take: 2, 
-      orderBy: { id: "asc" }, 
+      take: 2,
+      orderBy: { id: "asc" },
     });
   }
 
-  return recommendations;
+  return recommendations.slice(0, 5); 
 }
+
 
 export async function fetchUserData(username:string) {
   const userData=await prisma.user.findUnique(

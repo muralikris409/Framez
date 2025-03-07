@@ -8,6 +8,7 @@ const prisma = new PrismaClient();
 
 if (!admin.apps.length) {
   const serviceAccount = require('@/service_key.json');
+  console.log("serviceacc",serviceAccount);
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
   });
@@ -60,7 +61,7 @@ export async function sendNotificationToUsers({
 
     const payload = {
       notification: {
-        title,
+        title: `🚀 ${title}`,
         body: message,
       },
       webpush: {
@@ -68,12 +69,27 @@ export async function sendNotificationToUsers({
           icon: logo,
           badge: logo,
           click_action: link,
+          vibrate: [200, 100, 200],
+          sound: "default", 
+          actions: [
+            {
+              action: "open",
+              title: "🔗 Open Now",
+            },
+            {
+              action: "dismiss",
+              title: "❌ Dismiss",
+            },
+          ],
         },
         fcmOptions: {
           link,
         },
       },
     };
+    
+
+ 
 
     const sendResults = await Promise.allSettled(
       tokensToSend.map((token) =>
@@ -83,11 +99,23 @@ export async function sendNotificationToUsers({
         })
       )
     );
-
+    
     const failedTokens = sendResults
-      .map((result, index) => (result.status === 'rejected' ? tokensToSend[index] : null))
+      .map((result, index) =>
+        result.status === 'rejected'
+          ? { token: tokensToSend[index], error: result.reason.message }
+          : null
+      )
       .filter(Boolean);
+    const obj={
+      success: true,
+      message: `Notifications sent to ${tokensToSend.length} devices.`,
+      failedTokens,
+      skippedUsers,
+    }
    console.log(`Notifications sent to ${tokensToSend.length} devices.`)
+   console.log(obj);
+   
     return {
       success: true,
       message: `Notifications sent to ${tokensToSend.length} devices.`,

@@ -13,7 +13,7 @@ export async function POST(req) {
     
     const payload = jwt.verify(token, process.env.JWT_SECRET);
     const userId=payload.id;
-
+    const username=payload.username;
     if (!payload) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const followingUser = await prisma.user.findUnique({
@@ -40,7 +40,7 @@ export async function POST(req) {
       data: { followerId: userId, followingId: followingUser.id }
     });
     console.log("in follow");
-    await sendNotificationToUsers({usernames:[followingUsername],title:"Framez",message:"Murali followed you"});
+    await sendNotificationToUsers({usernames:[followingUsername],title:"Framez",message:`${username} followed you`});
     return NextResponse.json({ message: "Followed successfully" }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

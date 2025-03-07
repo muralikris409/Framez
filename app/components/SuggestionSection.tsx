@@ -93,11 +93,11 @@ const SuggestionSection = () => {
   useEffect(() => {
     const fetchSuggestions = async () => {
       try {
+       
         const res = await getRecommendations();
-        console.log(await getRecommendations());
-        
-        const data = res;
-        setSuggestedUsers(data);
+console.log("Fetched recommendations:", res.length);
+setSuggestedUsers(res);
+
       } catch (error) {
         console.error("Error fetching recommendations:", error);
       } finally {
