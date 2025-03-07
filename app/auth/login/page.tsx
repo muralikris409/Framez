@@ -71,7 +71,8 @@ const LoginForm: React.FC = () => {
 
       } catch (err) {
         const error = err as AxiosError<{ message: string }>;
-        toast.error(error.response?.data?.message || "Something went wrong");
+        console.log(error);
+        toast.error(error?.message||error.response?.data?.message || "Something went wrong");
       }
       finally{
         setLoading(false);
