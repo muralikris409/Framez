@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import { PrismaClient } from "@prisma/client";
 import { getToken } from "@/app/actions/cookieHandler";
 import { getFollowing } from "@/app/actions/userActions";
+import { sendNotificationToUsers } from "@/app/actions/sendNotification";
 const prisma=new PrismaClient();
 export async function GET(req) {
     try {

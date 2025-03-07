@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
+import { sendNotificationToUsers } from "@/app/actions/sendNotification";
 const prisma=new PrismaClient();
 export async function POST(req) {
   try {
