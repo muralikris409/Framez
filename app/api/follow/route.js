@@ -5,6 +5,8 @@ import {sendNotificationToUsers} from '../../actions/sendNotification.ts'
 const prisma=new PrismaClient();
 export async function POST(req) {
   try {
+    console.log("in follow");
+
     const url = new URL(req.url);
     const followingUsername = url.searchParams.get("followingUsername");
     const token = (await req.headers.get("authorization"))?.split(" ")[1].trim();
@@ -37,7 +39,8 @@ export async function POST(req) {
     await prisma.follower.create({
       data: { followerId: userId, followingId: followingUser.id }
     });
-    sendNotificationToUsers({usernames:[followingUsername],title:"Framez",message:"Murali followed you"});
+    console.log("in follow");
+    await sendNotificationToUsers({usernames:[followingUsername],title:"Framez",message:"Murali followed you"});
     return NextResponse.json({ message: "Followed successfully" }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

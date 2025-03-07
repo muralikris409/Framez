@@ -87,7 +87,7 @@ export async function sendNotificationToUsers({
     const failedTokens = sendResults
       .map((result, index) => (result.status === 'rejected' ? tokensToSend[index] : null))
       .filter(Boolean);
-
+   console.log(`Notifications sent to ${tokensToSend.length} devices.`)
     return {
       success: true,
       message: `Notifications sent to ${tokensToSend.length} devices.`,
