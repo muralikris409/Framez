@@ -31,6 +31,7 @@ const PostComponent: React.FC<PostComponentProps> = ({ post, fetchData }) => {
       await axiosInstance.post("/api/like", { postId: post.id });
       fetchData();
     } catch (error: any) {
+      console.log(error)
       console.error(error.response?.data || error.message);
     } finally {
       setLoadingLike(false);
